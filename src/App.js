@@ -14,7 +14,7 @@ class App extends React.Component
     intervalIsSet: false,
     idToDelete: 0,
     idToUpdate: 0,
-    updateToApply:null
+    updateToApply: null
   };
 
   // This runs (1 second) after the render is done.
@@ -78,6 +78,7 @@ class App extends React.Component
       console.log(typeof(idToDelete)+typeof(objIdToDelete));
       console.log(" dat.id "+dat.id+" dat._id "+dat._id+" objIdToDelete "+objIdToDelete+" idToDelete "+idToDelete );
     });
+
     console.log(" delete "+idToDelete+" "+objIdToDelete);
     axios.delete(`http://localhost:8080/api/deleteData/${objIdToDelete}`)
     .then((res) => {
@@ -95,7 +96,7 @@ class App extends React.Component
     this.state.data.forEach((dat) =>
     {
       console.log(typeof(dat.id)+typeof(idToUpdate));
-      if(idToUpdate === dat.id)
+      if(idToUpdate == dat.id)
       {
         objIdToUpdate = dat._id;
       }
@@ -166,7 +167,7 @@ class App extends React.Component
           <input
             type="text"
             style={{ width: '200px' }}
-            onChange={(e) => this.setState({idToUpdate: e.target.value})}
+            onChange={(e) => this.setState({ idToUpdate: e.target.value })}
             placeholder='ID to Update...'
           />
 
