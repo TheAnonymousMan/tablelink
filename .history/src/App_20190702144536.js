@@ -91,7 +91,7 @@ class App extends React.Component
   updateDb = (idToUpdate, updateToApply) => 
   {
     let objIdToUpdate = null;
-    parseInt(idToUpdate);
+  
     this.state.data.forEach((dat) =>
     {
       console.log(typeof(dat.id)+typeof(idToUpdate));
@@ -102,7 +102,6 @@ class App extends React.Component
       console.log(" dat_id "+dat._id+" type "+typeof(dat._id));
       console.log(" idToUpdate "+idToUpdate+typeof(idToUpdate)+" objIdToUpdate "+objIdToUpdate +typeof(objIdToUpdate))
     });
-
     console.log(" update "+idToUpdate+" objIdToUpdate "+objIdToUpdate);
     axios.post('http://localhost:8080/api/updateData',{
       id: objIdToUpdate,
