@@ -12,9 +12,8 @@ class App extends React.Component
     id: 0,
     name: null,
     intervalIsSet: false,
-    idToDelete: 0,
-    idToUpdate: 0,
-    updateToApply:null
+    idToDelete: null,
+    idToUpdate: null
   };
 
   // This runs (1 second) after the render is done.
@@ -50,19 +49,17 @@ class App extends React.Component
   // This method sends the name and the self-generated ID to the back to be added.
   putDataToDb = (name) =>
   {
-    //let currentIds = this.state.data.map((data) => data.id);
-    let idToBeAdded = this.state.data.length + 1;
-    console.log(idToBeAdded);
-    // while(currentIds.includes(idToBeAdded))
-    // {
-    //   ++idToBeAdded;
-    // }
-    var data = { id: idToBeAdded,
-      name: name
-    };
-    console.log(data.id + data.name);
+    let currentIds = this.state.data.map((data) => data.id);
+    let idToBeAdded = 0;
+    while(currentIds.includes(idToBeAdded))
+    {
+      ++idToBeAdded;
+    }
     console.log(" post " + idToBeAdded +" "+name);
-    axios.post('http://localhost:8080/api/postData',data);
+    axios.post('http://localhost:8080/api/postData', {
+      id: idToBeAdded,
+      name: name,
+    });
   }
   // This method sends the id to be deleted to the back.
   deleteFromDb = (idToDelete) =>
@@ -71,37 +68,34 @@ class App extends React.Component
     let objIdToDelete = null;
     this.state.data.forEach((dat) => 
     {
-      if(dat.id == idToDelete)
+      if(dat.id === idToDelete)
       {
         objIdToDelete = dat._id;
       }
-      console.log(typeof(idToDelete)+typeof(objIdToDelete));
-      console.log(" dat.id "+dat.id+" dat._id "+dat._id+" objIdToDelete "+objIdToDelete+" idToDelete "+idToDelete );
+      console.log(" dat.id "+dat.id+" dat._id "+dat._id+" objIdToDelete "+objIdToDelete);
     });
     console.log(" delete "+idToDelete+" "+objIdToDelete);
-    axios.delete(`http://localhost:8080/api/deleteData/${objIdToDelete}`)
-    .then((res) => {
-        console.log(res);
-        console.log(res.data);
-      }
-    );
+    axios.delete('http://localhost:8080/api/deleteData',{
+      headers:{
+        'Content-Type': 'application/json'
+      },
+      data:objIdToDelete
+    });
   }
 
   // This method sends data and ID to be updated to the back.
   updateDb = (idToUpdate, updateToApply) => 
   {
-    let objIdToUpdate = '';
+    let objIdToUpdate = null;
     parseInt(idToUpdate);
     this.state.data.forEach((dat) =>
     {
-      console.log(typeof(dat.id)+" "+typeof(idToUpdate));
       if(idToUpdate === dat.id)
       {
         objIdToUpdate = dat._id;
       }
-      console.log(" idToUpdate "+idToUpdate+" "+typeof(idToUpdate)+" objIdToUpdate "+" "+objIdToUpdate +typeof(objIdToUpdate))
     });
-    console.log(" update "+idToUpdate+" objIdToUpdate "+objIdToUpdate);
+    console.log(" update "+idToUpdate+" "+objIdToUpdate);
     axios.post('http://localhost:8080/api/updateData',{
       id: objIdToUpdate,
       update: {name: updateToApply}
@@ -140,7 +134,7 @@ class App extends React.Component
 
           &nbsp;
 
-          <button onClick={() => this.putDataToDb(this.state.name)}>
+          <button onClick={() => this.putDataToDB(this.state.name)}>
             ADD
           </button>
         </div>
@@ -179,7 +173,7 @@ class App extends React.Component
 
           &nbsp;
 
-          <button onClick={()=>this.updateDb(this.state.idToUpdate, this.state.updateToApply)}>
+          <button onClick={this.updateDb(this.state.idToUpdate, this.state.updateToApply)}>
             UPDATE
           </button>
         </div>

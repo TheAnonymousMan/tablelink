@@ -90,18 +90,18 @@ class App extends React.Component
   // This method sends data and ID to be updated to the back.
   updateDb = (idToUpdate, updateToApply) => 
   {
-    let objIdToUpdate = '';
-    parseInt(idToUpdate);
+    let objIdToUpdate = null;
+  
     this.state.data.forEach((dat) =>
     {
-      console.log(typeof(dat.id)+" "+typeof(idToUpdate));
+      console.log(typeof(dat.id)+typeof(idToUpdate));
       if(idToUpdate === dat.id)
       {
         objIdToUpdate = dat._id;
       }
-      console.log(" idToUpdate "+idToUpdate+" "+typeof(idToUpdate)+" objIdToUpdate "+" "+objIdToUpdate +typeof(objIdToUpdate))
+      console.log(" idToUpdate "+idToUpdate+typeof(idToUpdate)+" objIdToUpdate "+objIdToUpdate +typeof(objIdToUpdate))
     });
-    console.log(" update "+idToUpdate+" objIdToUpdate "+objIdToUpdate);
+    console.log(" update "+idToUpdate+" "+objIdToUpdate);
     axios.post('http://localhost:8080/api/updateData',{
       id: objIdToUpdate,
       update: {name: updateToApply}

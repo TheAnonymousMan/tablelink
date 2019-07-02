@@ -1,7 +1,7 @@
 // Don't Panic.
 
 import React from 'react';
-import axios from 'axios';
+import Axios from 'axios';
 
 class App extends React.Component
 {
@@ -12,9 +12,8 @@ class App extends React.Component
     id: 0,
     name: null,
     intervalIsSet: false,
-    idToDelete: 0,
-    idToUpdate: 0,
-    updateToApply:null
+    idToDelete: null,
+    idToUpdate: null
   };
 
   // This runs (1 second) after the render is done.
@@ -35,7 +34,6 @@ class App extends React.Component
     if(this.state.intervalIsSet)
     {
       clearInterval(this.state.intervalIsSet);
-      this.setState({ intervalIsSet: null });
     }
   }
 
@@ -50,19 +48,17 @@ class App extends React.Component
   // This method sends the name and the self-generated ID to the back to be added.
   putDataToDb = (name) =>
   {
-    //let currentIds = this.state.data.map((data) => data.id);
-    let idToBeAdded = this.state.data.length + 1;
-    console.log(idToBeAdded);
-    // while(currentIds.includes(idToBeAdded))
-    // {
-    //   ++idToBeAdded;
-    // }
-    var data = { id: idToBeAdded,
-      name: name
-    };
-    console.log(data.id + data.name);
-    console.log(" post " + idToBeAdded +" "+name);
-    axios.post('http://localhost:8080/api/postData',data);
+    let currentIds = this.state.data.map((data) => data.id);
+    let idToBeAdded = 0;
+    while(currentIds.includes(idToBeAdded))
+    {
+      ++idToBeAdded;
+    }
+
+    Axios.post('http://localhost:8080/api/putData', {
+      id: idToBeAdded,
+      name: name,
+    });
   }
   // This method sends the id to be deleted to the back.
   deleteFromDb = (idToDelete) =>
@@ -71,38 +67,33 @@ class App extends React.Component
     let objIdToDelete = null;
     this.state.data.forEach((dat) => 
     {
-      if(dat.id == idToDelete)
+      if(dat.id === idToDelete)
       {
         objIdToDelete = dat._id;
       }
-      console.log(typeof(idToDelete)+typeof(objIdToDelete));
-      console.log(" dat.id "+dat.id+" dat._id "+dat._id+" objIdToDelete "+objIdToDelete+" idToDelete "+idToDelete );
     });
-    console.log(" delete "+idToDelete+" "+objIdToDelete);
-    axios.delete(`http://localhost:8080/api/deleteData/${objIdToDelete}`)
-    .then((res) => {
-        console.log(res);
-        console.log(res.data);
+
+    Axios.delete('http://localhost:8080/api/deleteData',{
+      data: {
+        id: objIdToDelete
       }
-    );
+    });
   }
 
   // This method sends data and ID to be updated to the back.
   updateDb = (idToUpdate, updateToApply) => 
   {
-    let objIdToUpdate = '';
+    let objIdToUpdate = null;
     parseInt(idToUpdate);
     this.state.data.forEach((dat) =>
     {
-      console.log(typeof(dat.id)+" "+typeof(idToUpdate));
       if(idToUpdate === dat.id)
       {
         objIdToUpdate = dat._id;
       }
-      console.log(" idToUpdate "+idToUpdate+" "+typeof(idToUpdate)+" objIdToUpdate "+" "+objIdToUpdate +typeof(objIdToUpdate))
     });
-    console.log(" update "+idToUpdate+" objIdToUpdate "+objIdToUpdate);
-    axios.post('http://localhost:8080/api/updateData',{
+
+    Axios.post('http://localhost:8080/api/updateData',{
       id: objIdToUpdate,
       update: {name: updateToApply}
     });
@@ -119,14 +110,15 @@ class App extends React.Component
         <ul>
           { data.length <= 0 
            ? 'NO DB ENTRIES YET'
-           : data.map((dat) => 
-            (
-              <li  key = { dat.id } style={{ padding: '10px' }} >
-                  <span style = {{ color: 'gray' }}> id: </span> {dat.id} <br/>
-                  <span style = {{ color: 'gray' }}> name: </span> {dat.name} <br/>
-                </li>
-           )
-          )
+           : () => {data.map((dat) => 
+              {
+                <li style={{ padding: '10px' }} key={data.name}>
+                    <span style = {{ color: 'gray' }}> id: </span> {dat.id} <br/>
+                  {dat.name}
+                  </li>
+              }
+            )
+           }
           }
         </ul>
 
@@ -140,7 +132,7 @@ class App extends React.Component
 
           &nbsp;
 
-          <button onClick={() => this.putDataToDb(this.state.name)}>
+          <button onClick={() => this.putDataToDB(this.state.name)}>
             ADD
           </button>
         </div>
@@ -179,7 +171,7 @@ class App extends React.Component
 
           &nbsp;
 
-          <button onClick={()=>this.updateDb(this.state.idToUpdate, this.state.updateToApply)}>
+          <button onClick={this.updateDb(this.state.idToUpdate, this.state.updateToApply)}>
             UPDATE
           </button>
         </div>

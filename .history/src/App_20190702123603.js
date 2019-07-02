@@ -12,8 +12,8 @@ class App extends React.Component
     id: 0,
     name: null,
     intervalIsSet: false,
-    idToDelete: 0,
-    idToUpdate: 0,
+    idToDelete: null,
+    idToUpdate: null,
     updateToApply:null
   };
 
@@ -50,19 +50,18 @@ class App extends React.Component
   // This method sends the name and the self-generated ID to the back to be added.
   putDataToDb = (name) =>
   {
-    //let currentIds = this.state.data.map((data) => data.id);
-    let idToBeAdded = this.state.data.length + 1;
+    let currentIds = this.state.data.map((data) => data.id);
+    let idToBeAdded = this.state.data.length;
     console.log(idToBeAdded);
-    // while(currentIds.includes(idToBeAdded))
-    // {
-    //   ++idToBeAdded;
-    // }
+    while(currentIds.includes(idToBeAdded))
+    {
+      ++idToBeAdded;
+    }
     var data = { id: idToBeAdded,
       name: name
     };
-    console.log(data.id + data.name);
     console.log(" post " + idToBeAdded +" "+name);
-    axios.post('http://localhost:8080/api/postData',data);
+    axios.post('http://localhost:8080/api/postData',{ data });
   }
   // This method sends the id to be deleted to the back.
   deleteFromDb = (idToDelete) =>
@@ -79,29 +78,31 @@ class App extends React.Component
       console.log(" dat.id "+dat.id+" dat._id "+dat._id+" objIdToDelete "+objIdToDelete+" idToDelete "+idToDelete );
     });
     console.log(" delete "+idToDelete+" "+objIdToDelete);
-    axios.delete(`http://localhost:8080/api/deleteData/${objIdToDelete}`)
-    .then((res) => {
-        console.log(res);
-        console.log(res.data);
-      }
-    );
+    axios.delete(`http://localhost:8080/api/deleteData/${objIdToDelete}`
+      // headers:{
+      //   'Content-Type': 'application/json'
+      // },
+      // data:objIdToDelete
+    ).then(res => {
+      console.log(res);
+      console.log(res.data);
+    });
   }
 
   // This method sends data and ID to be updated to the back.
   updateDb = (idToUpdate, updateToApply) => 
   {
-    let objIdToUpdate = '';
+    let objIdToUpdate = null;
     parseInt(idToUpdate);
     this.state.data.forEach((dat) =>
     {
-      console.log(typeof(dat.id)+" "+typeof(idToUpdate));
       if(idToUpdate === dat.id)
       {
         objIdToUpdate = dat._id;
       }
-      console.log(" idToUpdate "+idToUpdate+" "+typeof(idToUpdate)+" objIdToUpdate "+" "+objIdToUpdate +typeof(objIdToUpdate))
+      console.log(" idToUpdate "+idToUpdate+typeof(idToUpdate)+" objIdToUpdate "+objIdToUpdate +typeof(objIdToUpdate))
     });
-    console.log(" update "+idToUpdate+" objIdToUpdate "+objIdToUpdate);
+    console.log(" update "+idToUpdate+" "+objIdToUpdate);
     axios.post('http://localhost:8080/api/updateData',{
       id: objIdToUpdate,
       update: {name: updateToApply}
