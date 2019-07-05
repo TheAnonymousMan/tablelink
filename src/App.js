@@ -207,6 +207,8 @@ class App extends React.Component
             fields='name'
             callback={this.facebookResponse}
           />
+          
+          &nbsp;
 
           <GoogleLogin
             clientId='814522605413-tj63b2g5usausoe5laakktb8ekbcshvh.apps.googleusercontent.com'
