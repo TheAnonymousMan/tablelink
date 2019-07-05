@@ -200,7 +200,7 @@ class App extends React.Component
             UPDATE
           </button>
         </div>
-
+        
         <div style={{ padding: '10px' }}>          
           <FacebookLogin
             appID='652034088607010'
