@@ -2,6 +2,8 @@
 
 import React from 'react';
 import axios from 'axios';
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from 'react-google-login';
 
 class App extends React.Component
 {
@@ -111,6 +113,18 @@ class App extends React.Component
     });
   }
 
+  // Facebook login response manager
+  facebookResponse = (response) =>
+  {
+    console.log(response);
+  }
+
+  // Google login response manager
+  googleResponse = (response) =>
+  {
+    console.log(response);
+  }
+
   render()
   {
     const {data} = this.state;
@@ -185,6 +199,21 @@ class App extends React.Component
           <button onClick={()=>this.updateDb(this.state.idToUpdate, this.state.updateToApply)}>
             UPDATE
           </button>
+        </div>
+
+        <div style={{ padding: '10px' }}>          
+          <FacebookLogin
+            appID='652034088607010'
+            fields='name'
+            callback={this.facebookResponse}
+          />
+
+          <GoogleLogin
+            clientId='814522605413-tj63b2g5usausoe5laakktb8ekbcshvh.apps.googleusercontent.com'
+            buttonText='Login with Google'
+            onSuccess={this.googleResponse}
+            onFailure={this.googleResponse}
+          />
         </div>
       </div>
     )
